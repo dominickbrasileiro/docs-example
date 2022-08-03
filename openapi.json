@@ -1,0 +1,224 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Multiplier API Docs - OpenAPI 3.0",
+    "description": "Exemplo de documentação REST para as APIs da Multiplier.",
+    "version": "0.0.1"
+  },
+  "servers": [
+    {
+      "url": "http://gltextil.multiplier.local/api/v1",
+      "description": "Local"
+    },
+    {
+      "url": "http://gltextil.multiplier.com.br/api/v1",
+      "description": "Produção"
+    }
+  ],
+  "paths": {
+    "/pedidos": {
+      "get": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Lista todos os pedidos",
+        "description": "Lista todos os pedidos cadastrados na base de dados.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "Página a ser listada",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "cliente",
+            "in": "query",
+            "description": "Filtrar pedidos por cliente",
+            "required": false,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Pedido"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroInterno"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "pedidos"
+        ],
+        "summary": "Salva um pedido",
+        "description": "Salva um pedido no banco de dados.",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "description": "Dados para salvar o pedido",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id_cliente": {
+                    "type": "integer",
+                    "format": "int64",
+                    "example": 1623
+                  },
+                  "data_programacao": {
+                    "type": "string",
+                    "format": "date-time",
+                    "example": "2022-12-09T00:00:00.000Z"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Pedido"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validação falhou",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroRN"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno do servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErroInterno"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Pedido": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 248642
+          },
+          "id_cliente": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1623
+          },
+          "data_programacao": {
+            "type": "string",
+            "format": "date-time",
+            "example": "2022-12-09T00:00:00.000Z"
+          },
+          "status": {
+            "type": "integer",
+            "format": "int64",
+            "example": 9
+          },
+          "cliente": {
+            "$ref": "#/components/schemas/Cliente"
+          }
+        }
+      },
+      "Cliente": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 1623
+          },
+          "cnpj": {
+            "type": "string",
+            "example": "42.649.884-0001/50"
+          },
+          "razao_social": {
+            "type": "string",
+            "example": "Portal LTDA"
+          },
+          "nome_fantasia": {
+            "type": "string",
+            "example": "Portal Têxtil"
+          }
+        }
+      },
+      "ErroRN": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "example": "Ops, algo deu errado."
+          }
+        }
+      },
+      "ErroInterno": {
+        "type": "object",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "example": "Erro interno do servidor."
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    }
+  }
+}
